@@ -1,0 +1,106 @@
+<mat-sidenav-container id="mi-seccion-top"  class="sidenavContainer">
+  <!-- Menú de navegación lateral -->
+  <mat-sidenav #sidenav mode="over" autoFocus="none" [ngStyle]="{ width: '15.625rem' }">
+    <mat-toolbar color="">
+      <span>Menú</span>
+      <span class="spacer"></span>
+      <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+    </mat-toolbar>
+
+    <mat-nav-list>
+      <!-- Botones dinámicos -->
+      <mat-list-item
+      *ngFor="let item of sidebarItems()"
+      [routerLink]="item.url"
+      (click)="sidenav.toggle()"
+    >
+      <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+      {{ item.label }}
+      </mat-list-item>
+    </mat-nav-list>
+
+  </mat-sidenav>
+
+  <!-- Cabecera -->
+  <mat-toolbar color="primary" class=" px-0 px-md-5">
+
+    <ng-container *ngIf="isSmallScreen$ | async; else desktopView">
+      <!-- Vista mobile -->
+      <button mat-icon-button autoFocus="none" (click)="sidenav.toggle()"
+      matTooltip="Desplegar Menú" class="ms-1 ms-md-3">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </ng-container>
+
+    <ng-template #desktopView>
+      <!-- Vista desktop -->
+      <button
+      *ngFor="let item of sidebarItems()"
+      mat-button
+      [routerLink]="item.url"
+      color=""
+      class="fs-6 fw-bold me-5">
+        {{ item.label }}
+        <mat-icon>{{ item.icon }}</mat-icon>
+      </button>
+    </ng-template>
+
+    <span class="spacer"></span>
+
+    <!-- Botón Login -->
+    <button *ngIf="!user"
+    mat-button
+    routerLink="/auth/login"
+    color=""
+    class="fs-6 fw-bold">
+      Iniciar sesión
+      <mat-icon>login</mat-icon>
+    </button>
+
+
+    <div *ngIf="user">
+
+    <!-- Toogle menú usuario-->
+    <button mat-button color="" class="fs-6 fw-bold"
+    [matMenuTriggerFor]="userMenu">
+      {{ user | titlecase }}
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <!-- Menú usuario -->
+    <mat-menu #userMenu="matMenu" xPosition="after">
+
+      <!-- If Admin -->
+      <ng-container *ngIf="isAdmin; else profile">
+        <button mat-menu-item routerLink="dashboard">
+          Dashboard
+          <mat-icon>view_quilt</mat-icon>
+        </button>
+      </ng-container>
+
+      <!-- If normalUser -->
+      <ng-template #profile>
+        <button mat-menu-item routerLink="profile">
+          Perfil
+          <mat-icon>person</mat-icon>
+        </button>
+      </ng-template>
+      <!-- Cerrar sesión -->
+      <button mat-menu-item (click)="logout()"
+      class="logout" routerLink="">
+        Cerrar sesión
+        <mat-icon>logout</mat-icon>
+      </button>
+    </mat-menu>
+    </div>
+
+  </mat-toolbar>
+
+  <router-outlet></router-outlet>
+
+
+</mat-sidenav-container>
+

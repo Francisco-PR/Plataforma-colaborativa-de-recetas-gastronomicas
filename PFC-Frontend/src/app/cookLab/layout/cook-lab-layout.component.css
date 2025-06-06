@@ -1,0 +1,23 @@
+.sidenavContainer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left:0;
+  right:0
+}
+button {
+  margin-right: 1.25rem;
+}
+
+.container {
+  padding: 1.30rem;
+  background-color: none;
+}
+
+.login {
+  background-color: rgba(255, 255, 255, 0) !important;
+}
+
+.logout,  .logout mat-icon{
+  color: rgb(255, 88, 88);
+}

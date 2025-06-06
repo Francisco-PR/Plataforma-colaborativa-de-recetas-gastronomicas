@@ -1,0 +1,98 @@
+<mat-stepper class="bg-transparent px-2 pt-4 p-md-5" linear
+[orientation]="(stepperOrientation | async)!">
+  <!-- Step 1 -->
+  <mat-step [stepControl]="form.get('title')!" color="accent">
+    <div class="row justify-content-center mt-1 mt-md-3">
+      <div class="col-12 col-md-10 col-xl-8">
+        <form [formGroup]="form" class="pt-3">
+          <ng-template matStepLabel>Título, Descripción e Imagen</ng-template>
+          <mat-form-field appearance="outline" color="accent" class="w-100">
+            <mat-label>Título</mat-label>
+            <input matInput formControlName="title">
+            <mat-error *ngIf="isValidField('title')">El titulo es <strong>requerido</strong>.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" color="accent" class="w-100">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput formControlName="description"></textarea>
+            <mat-error *ngIf="isValidField('description')">Por favor introduce una <strong>descripción</strong>.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" color="accent" class="w-100">
+            <mat-label>Imagen (URL) - opcional</mat-label>
+            <input matInput formControlName="image">
+          </mat-form-field>
+
+          <div class="d-flex justify-content-end">
+            <button mat-raised-button color="accent" matStepperNext>Siguiente</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </mat-step>
+
+  <!-- Step 2 -->
+  <mat-step [stepControl]="form.get('preparationTime')!" color="accent">
+    <div class="row justify-content-center mt-1 mt-md-3">
+      <div class="col-12 col-md-10 col-xl-8">
+        <form [formGroup]="form" class="pt-3">
+          <ng-template matStepLabel>Tiempo de preparación y Categorías</ng-template>
+          <mat-form-field appearance="outline" color="accent" class="w-100">
+            <mat-label>Tiempo de preparación (minutos)</mat-label>
+            <input matInput type="number" placeholder="0" formControlName="preparationTime">
+            <mat-error *ngIf="isValidField('preparationTime')">Por favor un tiempo de preparación entre <strong>1 - 720 min</strong>.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" color="accent" class="w-100">
+            <mat-label>Categorías</mat-label>
+            <mat-select formControlName="categories" multiple>
+              <mat-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="d-flex justify-content-between">
+            <button mat-raised-button color="" matStepperPrevious>Anterior</button>
+            <button mat-raised-button color="accent" matStepperNext>Siguiente</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </mat-step>
+
+  <!-- Step 3 -->
+  <mat-step color="accent">
+      <div class="row justify-content-center mt-1 mt-md-3">
+        <div class="col-12 col-md-10 col-xl-8">
+          <ng-template matStepLabel>Ingredientes y Pasos</ng-template>
+          <div>
+            <h5>Ingredientes</h5>
+            <div *ngFor="let ing of ingredients.controls; let i = index" class="d-flex mb-2">
+              <mat-form-field class="flex-grow-1 me-2" appearance="outline" color="accent">
+                <input matInput [formControl]="$any(ing)" placeholder="Ingrediente {{ i + 1 }}">
+                <mat-error *ngIf="ing.invalid">Por favor introduce este <strong>ingrediente</strong>.</mat-error>
+              </mat-form-field>
+              <button mat-icon-button color="warn" (click)="removeIngredient(i)"><mat-icon>clear</mat-icon></button>
+            </div>
+            <button mat-button (click)="addIngredient()">+ Añadir ingrediente</button>
+
+            <h5 class="mt-4">Pasos</h5>
+            <div *ngFor="let step of steps.controls; let i = index" class="d-flex mb-2">
+              <mat-form-field class="flex-grow-1 me-2" appearance="outline" color="accent">
+                <input matInput [formControl]="$any(step)" placeholder="Paso {{ i + 1 }}">
+                <mat-error *ngIf="step.invalid">Por favor introduce este <strong>paso</strong>.</mat-error>
+              </mat-form-field>
+              <button mat-icon-button color="warn" (click)="removeStep(i)"><mat-icon>clear</mat-icon></button>
+            </div>
+            <button mat-button (click)="addStep()">+ Añadir paso</button>
+          </div>
+
+          <div class="d-flex justify-content-between mt-4">
+            <button mat-raised-button color="" matStepperPrevious>Anterior</button>
+            <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="onSubmit()">
+              {{ isEditMode ? 'Actualizar' : 'Crear' }} receta
+            </button>
+          </div>
+        </div>
+      </div>
+  </mat-step>
+</mat-stepper>

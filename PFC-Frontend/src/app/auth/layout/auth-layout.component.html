@@ -1,0 +1,48 @@
+<mat-toolbar color="primary">
+
+  <!-- Botón a home vista mobile -->
+  <button
+  mat-icon-button
+  routerLink="/cooklab/home"
+  matTooltip="Volver a home"
+  class="ms-1 d-flex d-md-none">
+    <mat-icon>home</mat-icon>
+  </button>
+
+  <!-- Botón a home vista desktop -->
+  <button
+  mat-button
+  routerLink="/cooklab/home"
+  color=""
+  class="fs-6 ms-5 fw-bold d-md-flex d-none">
+    Volver a inicio
+    <mat-icon>home</mat-icon>
+  </button>
+
+  <span class="spacer"></span>
+
+  <!-- Botón a loginPage desde registerPage -->
+  <button
+  mat-button
+  *ngIf=" !isLogin "
+  routerLink="login"
+  color=""
+  class="fs-6 fw-bold me-1 me-md-5">
+    Iniciar sesión
+    <mat-icon>login</mat-icon>
+  </button>
+
+  <!-- Botón a registerPage desde loginPage -->
+  <button
+  mat-button
+  *ngIf=" isLogin "
+  routerLink="register"
+  color=""
+  class="fs-6 fw-bold me-1 me-md-5">
+    Registrase
+    <mat-icon>person_add</mat-icon>
+  </button>
+
+</mat-toolbar>
+
+  <router-outlet></router-outlet>

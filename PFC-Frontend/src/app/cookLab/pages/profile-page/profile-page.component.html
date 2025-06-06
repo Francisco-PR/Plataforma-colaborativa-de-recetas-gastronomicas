@@ -1,0 +1,114 @@
+<div class="container py-4">
+
+  <!-- Recetas creadas por el usuario -->
+  <div class="w-100 d-flex align-items-center align-items-md-end">
+    <h2 class="mb-4 fs-2 ">Mis Recetas</h2>
+    <span class="spacer"></span>
+    <button mat-fab extended color="accent" class="mb-5 fs-6" routerLink="/cookLab/create-recipe">
+       Crear <span class="d-none d-md-inline-block">receta</span>
+      <mat-icon>add_circle</mat-icon>
+    </button>
+  </div>
+  <div class="row">
+    <ng-container *ngIf="userRecipes().length > 0; else noUserRecipes">
+      <div class="col-md-4 mb-3" *ngFor="let recipe of userRecipes()" routerLink="../recipe/{{recipe._id}}">
+        <mat-card class="h-100 shadow-sm">
+          <img mat-card-image
+            [src]="recipe.image"
+            alt="Imagen de receta"
+            (error)="onImageError($event)"
+          />
+          <mat-card-header class="mt-auto">
+            <mat-card-title>{{ recipe.title }}</mat-card-title>
+            <mat-card-subtitle>por {{ recipe.author.username }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content class="mt-auto">
+            <p>{{ recipe.description }}</p>
+            <p><strong>Tiempo de preparacion:</strong> {{ recipe.preparationTime }} min</p>
+            <div class="w-100 d-flex">
+              <span class="spacer"></span>
+              <button mat-icon-button color="accent" matTooltip="Actualizar receta" routerLink="/cookLab/update-recipe/{{recipe._id}}">
+                <mat-icon>edit</mat-icon>
+              </button>
+               <button mat-icon-button  color="warn" matTooltip="Eliminar receta" (click)="confirmDeleteRecipe(recipe._id); $event.stopPropagation()">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </ng-container>
+
+    <!-- Sin recetas del usuario -->
+    <ng-template #noUserRecipes>
+      <div class="col-12 text-center fs-1 py-2">
+        <h5 class="fs-5">Crea tus propias recetas, podrás visualizar todas aquí.</h5>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Paginación recetas del usuario-->
+  <mat-paginator class="rounded-5 bg-dark"
+    *ngIf="userRecipesPagination().totalCount > 0"
+    [length]="userRecipesPagination()!.totalCount"
+    hidePageSize="true"
+    [pageSize]="3"
+    [pageIndex]="userRecipesPagination()!.currentPage - 1"
+    (page)="getUserRecipes($event.pageIndex + 1)">
+  </mat-paginator>
+
+  <mat-divider class="my-5" />
+
+  <!-- Recetas favoritas -->
+  <h2 class="mb-4 fs-2">Recetas Favoritas</h2>
+  <div class="row">
+    <ng-container *ngIf="userFavoriteRecipes().length > 0; else noUserFavoriteRecipes">
+      <div class="col-md-4 mb-3" *ngFor="let recipe of userFavoriteRecipes()" routerLink="../recipe/{{recipe._id}}">
+        <mat-card class="h-100 shadow-sm">
+          <img mat-card-image
+            [src]="recipe.image"
+            alt="Imagen de receta"
+            (error)="onImageError($event)"
+          />
+          <mat-card-header class="mt-auto">
+            <mat-card-title>{{ recipe.title }}</mat-card-title>
+            <mat-card-subtitle>por {{ recipe.author.username }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content class="mt-auto">
+            <p>{{ recipe.description }}</p>
+            <p><strong>Tiempo de preparacion:</strong> {{ recipe.preparationTime }} min</p>
+            <div class="w-100 d-flex">
+              <span class="spacer"></span>
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="confirmRemoveRecipeFromFavorites(recipe._id); $event.stopPropagation()"
+                matTooltip="Quitar de favoritos"
+              >
+                <mat-icon>heart_broken</mat-icon>
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </ng-container>
+
+    <!-- Sin recetas favoritas -->
+    <ng-template #noUserFavoriteRecipes>
+      <div class="col-12 text-center py-2">
+        <h5 class="fs-5">Añade recetas a favoritos, podrás visualizar todas aquí.</h5>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Paginación recetas favoritas-->
+  <mat-paginator class="rounded-5 bg-dark"
+    *ngIf="favoriteRecipesPagination().totalCount > 0"
+    [length]="favoriteRecipesPagination()!.totalCount"
+    hidePageSize="true"
+    [pageSize]="3"
+    [pageIndex]="favoriteRecipesPagination()!.currentPage - 1"
+    (page)="getUserFavoriteRecipes($event.pageIndex + 1)">
+  </mat-paginator>
+
+</div>

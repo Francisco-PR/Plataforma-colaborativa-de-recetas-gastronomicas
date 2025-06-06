@@ -1,0 +1,13 @@
+:host {
+  display: block;
+  min-height: calc(100vh - 64px);
+  background: linear-gradient(to right, #1e1e2f, #2c2c3d);
+}
+
+.recipe-image {
+  width: 80%;
+  max-height: 350px;
+  object-fit: fill;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}

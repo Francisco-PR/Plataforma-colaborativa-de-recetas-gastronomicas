@@ -1,0 +1,246 @@
+<div *ngIf="recipe(); else loading" class="container py-4 text-white">
+
+  <h2 class="text-light d-flex align-items-center gap-2">
+    {{ recipe()?.title }}
+    <ng-container *ngIf="isAdmin; else UserDisplay">
+
+      <button mat-icon-button [matMenuTriggerFor]="adminMenu" aria-label="Opciones">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <!-- Menú principal -->
+      <mat-menu #adminMenu="matMenu">
+
+        <!-- Ban con submenú -->
+        <button mat-menu-item [matMenuTriggerFor]="banMenu">
+          <mat-icon>block</mat-icon>
+          <span>Banear Autor</span>
+        </button>
+
+          <!-- Eliminar -->
+        <button mat-menu-item (click)="confirmDeleteRecipe(recipe()!._id)">
+          <mat-icon color="warn">delete</mat-icon>
+          <span>Eliminar Receta</span>
+        </button>
+
+      </mat-menu>
+
+      <!-- Submenú de ban -->
+      <mat-menu #banMenu="matMenu">
+        <button mat-menu-item (click)="confirmBanUser(recipe()?.author!._id, '1h')">
+          <span>1 hora</span>
+        </button>
+        <button mat-menu-item (click)="confirmBanUser(recipe()?.author!._id, '1d')">
+          <span>1 día</span>
+        </button>
+        <button mat-menu-item (click)="confirmBanUser(recipe()?.author!._id, '3d')">
+          <span>3 días</span>
+        </button>
+      </mat-menu>
+
+    </ng-container>
+    <ng-template #UserDisplay>
+
+      <ng-container *ngIf="user?._id != recipe()?.author?._id; else authorDisplay">
+        <button
+        mat-icon-button
+        color="warn"
+        (click)="toggleFavorite()"
+        [matTooltip]="isFavorite() ? 'Quitar de favoritos' : 'Añadir a favoritos'"
+        *ngIf="user"
+      >
+        <mat-icon>{{ isFavorite() ? 'favorite' : 'favorite_border' }}</mat-icon>
+      </button>
+      </ng-container>
+      <ng-template #authorDisplay>
+
+
+
+
+        <button mat-icon-button [matMenuTriggerFor]="authorMenu" aria-label="Opciones">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <mat-menu #authorMenu="matMenu">
+
+        <button mat-menu-item routerLink="/cookLab/update-recipe/{{recipe()!._id}}">
+          <mat-icon>edit</mat-icon>
+          <span>Modificar Receta</span>
+        </button>
+
+        <button mat-menu-item (click)="confirmDeleteRecipe(recipe()!._id)">
+          <mat-icon color="warn">delete</mat-icon>
+          <span>Eliminar Receta</span>
+        </button>
+
+        </mat-menu>
+
+      </ng-template>
+
+    </ng-template>
+
+  </h2>
+
+  <div class="row">
+    <div class="col-md-6 order-md-1">
+      <img [src]="recipe()!.image" alt="{{ recipe()!.title }}" class="recipe-image mb-4" (error)="onImageError($event)" />
+    </div>
+
+    <div class="col-md-6 align-content-center order-md-0">
+      <p class="lead mb-5">{{ recipe()!.description }}</p>
+      <div class="mb-3">
+        <strong>Autor:</strong> {{ recipe()!.author.username }}
+      </div>
+      <div class="mb-3">
+        <strong>Tiempo de preparación:</strong>
+        {{ recipe()!.preparationTime | preparationTime }}
+      </div>
+      <div class="mb-3">
+        <strong>Puntuación:</strong>
+        {{ recipe()!.ratings }} ⭐
+      </div>
+      <div class="mb-4">
+        <strong>Categorías:</strong>
+        <mat-chip-listbox>
+          <mat-chip
+            *ngFor="let category of recipe()!.categories"
+            color="accent"
+            selected
+            class="me-1"
+          >
+            {{ category }}
+          </mat-chip>
+        </mat-chip-listbox>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <h3>Ingredientes</h3>
+      <ul class="list-group">
+        <li *ngFor="let ingredient of recipe()!.ingredients" class="list-group-item bg-dark text-white">
+          {{ ingredient }}
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-6 mb-4">
+      <h3>Pasos</h3>
+      <ol class="list-group list-group-numbered">
+        <li *ngFor="let step of recipe()!.steps" class="list-group-item bg-dark text-white">
+          {{ step }}
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- VALORACIONES -->
+  <div *ngIf="user && !isAdmin" class="mb-4 d-flex flex-column align-items-start">
+    <label class="form-label text-light mb-2">Valora esta receta:</label>
+    <div class="d-flex flex-wrap gap-2">
+      <button
+        *ngFor="let value of [1,2,3,4,5]"
+        mat-stroked-button
+        [color]="userRating() === value ? 'accent' : ''"
+        (click)="onRateRecipe(value)"
+        class="fs-5 p-2">
+        {{ value }} ⭐
+      </button>
+    </div>
+  </div>
+
+  <!-- COMENTARIOS -->
+  <div class="mt-4">
+    <h4 class="text-white">Comentarios</h4>
+
+    <div *ngIf="user; else loginMessage">
+      <form [formGroup]="commentForm" (ngSubmit)="onSubmitComment()" class="mb-3">
+        <mat-form-field appearance="outline" class="w-100" color="accent">
+          <mat-label>Escribe un comentario</mat-label>
+          <textarea matInput formControlName="content" rows="3"></textarea>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="accent"
+          type="submit"
+          [disabled]="commentForm.get('content')?.value?.length === 0 || commentForm.invalid"
+        >
+          Publicar
+        </button>
+      </form>
+    </div>
+
+    <ng-template #loginMessage>
+      <p class="fst-italic">Inicia sesión para dejar un comentario.</p>
+    </ng-template>
+
+    <div class="list-group">
+      <div *ngFor="let comment of recipe()?.comments" class="list-group-item bg-dark text-light d-flex justify-content-between align-items-start">
+
+        <div>
+          <strong>{{ comment.user.username }}</strong>
+          <p class="mb-0">{{ comment.content }}</p>
+        </div>
+
+        <ng-container *ngIf="isAdmin; else UserDisplay">
+
+        <!-- Toggle admin menú -->
+        <button mat-icon-button [matMenuTriggerFor]="adminMenu" aria-label="Opciones">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+
+        <!-- Admin menú -->
+        <mat-menu #adminMenu="matMenu">
+
+          <!-- Ban con submenú -->
+          <button mat-menu-item [matMenuTriggerFor]="banMenu">
+            <mat-icon>block</mat-icon>
+            <span>Banear Usuario</span>
+          </button>
+          <!-- Eliminar compentario -->
+          <button mat-menu-item (click)="onDeleteComment(comment._id)">
+            <mat-icon color="warn">delete</mat-icon>
+            <span>Eliminar Comentario</span>
+          </button>
+
+        </mat-menu>
+
+        <!-- Submenú de ban -->
+        <mat-menu #banMenu="matMenu">
+          <button mat-menu-item (click)="confirmBanUser(comment.user._id, '1h')">
+            <span>1 hora</span>
+          </button>
+          <button mat-menu-item (click)="confirmBanUser(comment.user._id, '1d')">
+            <span>1 día</span>
+          </button>
+          <button mat-menu-item (click)="confirmBanUser(comment.user._id, '3d')">
+            <span>3 días</span>
+          </button>
+        </mat-menu>
+
+      </ng-container>
+      <ng-template #UserDisplay>
+          <!-- Eliminar comentario -->
+          <button
+            *ngIf="user?._id === comment.user._id"
+            mat-icon-button
+            color="warn"
+            aria-label="Eliminar comentario"
+            (click)="onDeleteComment(comment._id)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+
+      </ng-template>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<ng-template #loading>
+  <div class="text-center py-5">
+    <mat-spinner color="accent"></mat-spinner>
+    <p class="mt-3">Cargando receta...</p>
+  </div>
+</ng-template>

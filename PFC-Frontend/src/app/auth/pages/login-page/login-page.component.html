@@ -1,0 +1,38 @@
+<div class="container pt-5">
+  <div class="row justify-content-center px-3 px-md-0 mt-0 mt-md-5">
+    <div class="col-12 col-md-10 col-xl-6">
+      <h2>Iniciar Sesión</h2>
+      <form [formGroup]="loginForm" (ngSubmit)="login()">
+
+        <!-- Input email -->
+        <mat-form-field class="w-100 mb-3" appearance="fill" color="accent">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email" />
+          <mat-error *ngIf="isValidField('email')">Por favor introduce un email <strong>valido</strong>.</mat-error>
+        </mat-form-field>
+
+        <!-- Input contraseña -->
+        <mat-form-field class="w-100 mb-3" appearance="fill" color="accent">
+          <mat-label>Contraseña</mat-label>
+          <input matInput formControlName="password" type="password" />
+          <mat-error *ngIf="isValidField('password')">La contraseña debe de ser <strong>mayor de 6</strong> caracteres.</mat-error>
+        </mat-form-field>
+
+        <!-- Botón inicia sesión -->
+        <button mat-raised-button color="primary" class="w-100" type="submit" [disabled]="loginForm.invalid">
+          Entrar
+        </button>
+      </form>
+
+      <br>
+
+      <!-- Botón a login -->
+      <div class="d-flex justify-content-center">
+        <button mat-button color="accent" class="w-75" type="button" routerLink="/auth/register">
+          <span class="text-white">¿Aun no tienes cuenta?</span> Registrate
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

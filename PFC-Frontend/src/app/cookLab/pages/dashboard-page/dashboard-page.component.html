@@ -1,0 +1,101 @@
+<div class="container">
+  <div class="row">
+
+    <!-- Filtro lateral / superior -->
+    <div class="col-12 col-md-5 mb-4 mt-3">
+      <div class="bg-dark rounded shadow-sm p-3">
+        <label class="fs-6">
+          Filtrar usuarios
+        </label>
+        <form [formGroup]="filterForm" class="d-flex flex-column gap-1 mt-3">
+          <mat-form-field color="accent" appearance="outline">
+            <mat-label>Nombre de usuario</mat-label>
+            <input matInput formControlName="username" placeholder="Buscar por nombre" />
+          </mat-form-field>
+
+          <mat-checkbox formControlName="isBanned">Mostrar solo baneados</mat-checkbox>
+        </form>
+      </div>
+
+    </div>
+
+    <!-- Lista de usuarios -->
+    <div class="col-12 col-md-7 mt-3">
+      <div class="row">
+        <ng-container *ngIf="users().length > 0; else noUsers">
+          <div class="col-12 col-lg-6 mb-4" *ngFor="let user of users()">
+            <mat-card class="h-100 shadow-sm">
+              <mat-card-header>
+                <mat-card-title>{{ user.username }}</mat-card-title>
+                <mat-card-subtitle>{{ user.email }}</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <p><strong>ID:</strong> {{ user._id }}</p>
+                <p><strong>Creado en:</strong> {{ user.createdAt | date:'short' }}</p>
+                <p *ngIf="user.bannedUntil"><strong>Baneado hasta:</strong> {{ user.bannedUntil | date:'short' }}</p>
+              </mat-card-content>
+              <mat-card-actions class="d-flex justify-content-end">
+                <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="Opciones">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+
+                <!-- Menú principal -->
+                <mat-menu #userMenu="matMenu">
+
+                  <!-- Ban con submenú -->
+                  <button mat-menu-item [matMenuTriggerFor]="banMenu">
+                    <mat-icon>block</mat-icon>
+                    <span>Banear</span>
+                  </button>
+
+                  <!-- Desbanear -->
+                  <button mat-menu-item (click)="confirmUnbanUser(user._id)" *ngIf="user.bannedUntil">
+                    <mat-icon>lock_open</mat-icon>
+                    <span>Desbanear</span>
+                  </button>
+
+                     <!-- Eliminar -->
+                  <button mat-menu-item (click)="confirmDeleteUser(user._id)">
+                    <mat-icon color="warn">delete</mat-icon>
+                    <span>Eliminar</span>
+                  </button>
+
+                </mat-menu>
+
+                <!-- Submenú de ban -->
+                <mat-menu #banMenu="matMenu">
+                  <button mat-menu-item (click)="confirmBanUser(user._id, '1h')">
+                    <span>1 hora</span>
+                  </button>
+                  <button mat-menu-item (click)="confirmBanUser(user._id, '1d')">
+                    <span>1 día</span>
+                  </button>
+                  <button mat-menu-item (click)="confirmBanUser(user._id, '3d')">
+                    <span>3 días</span>
+                  </button>
+                </mat-menu>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+        </ng-container>
+
+        <ng-template #noUsers>
+          <div class="col-12 text-center mt-3 py-2">
+            <h5 class="fs-5">No se encontraron coincidencias</h5>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Paginación -->
+      <div class="d-flex justify-content-center mt-4" *ngIf="usersPagination().totalCount > 6">
+        <mat-paginator class="rounded-5 bg-dark"
+          [length]="usersPagination()!.totalCount"
+          hidePageSize="true"
+          [pageSize]="6"
+          [pageIndex]="usersPagination()!.currentPage - 1"
+          (page)="onPageChange($event);">
+        </mat-paginator>
+      </div>
+    </div>
+  </div>
+</div>

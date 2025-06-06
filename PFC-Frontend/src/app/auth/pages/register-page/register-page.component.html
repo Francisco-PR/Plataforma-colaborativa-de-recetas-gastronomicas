@@ -1,0 +1,53 @@
+<div class="container pt-5">
+  <div class="row justify-content-center px-3 px-md-0 mt-0 mt-md-5">
+    <div class="col-12 col-md-10 col-xl-6">
+      <h2>Crear Cuenta</h2>
+      <form [formGroup]="registerForm" (ngSubmit)="register()">
+
+        <!-- Input nombre de usuario -->
+        <mat-form-field class="w-100 mb-3" appearance="fill"  color="accent">
+          <mat-label>Nombre de usuario</mat-label>
+          <input matInput formControlName="username" />
+          <mat-error *ngIf="isValidField('username')">El nombre de usuario es <strong>requerido</strong>.</mat-error>
+        </mat-form-field>
+
+        <!-- Input email -->
+        <mat-form-field class="w-100 mb-3" appearance="fill"  color="accent">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email" />
+          <mat-error *ngIf="isValidField('email')">Por favor introduce un email <strong>valido</strong>.</mat-error>
+        </mat-form-field>
+
+        <!-- Input contraseña -->
+        <mat-form-field class="w-100 mb-3" appearance="fill"  color="accent">
+          <mat-label>Contraseña</mat-label>
+          <input matInput formControlName="password" type="password" />
+          <mat-error *ngIf="isValidField('password')">La contraseña debe de ser <strong>mayor de 6</strong> caracteres.</mat-error>
+        </mat-form-field>
+
+        <!-- Input repetir contraseña -->
+        <mat-form-field class="w-100 mb-3" appearance="fill"  color="accent">
+          <mat-label>Repetir contraseña</mat-label>
+          <input matInput formControlName="password2" type="password" />
+          <mat-error *ngIf="isValidField('password2')">La contraseña debe coincidir.</mat-error>
+        </mat-form-field>
+
+        <!-- Botón registrar -->
+        <button mat-raised-button color="accent" class="w-100" type="submit" [disabled]="registerForm.invalid">
+          Registrarse
+        </button>
+      </form>
+
+      <br>
+
+      <!-- Botón a login -->
+      <div class="d-flex justify-content-center">
+        <button mat-button color="accent" class="w-75" type="button" routerLink="/auth/login">
+          <span class="text-white">¿Ya tienes cuenta?</span> Inicia sesión
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

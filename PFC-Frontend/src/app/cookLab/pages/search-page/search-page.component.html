@@ -1,0 +1,97 @@
+<div class="container-fluid px-3 px-lg-5 py-3">
+  <div class="row">
+      <!-- Filtros -->
+    <div class="col-12 col-md-5 col-xl-4 mb-4 mt-3">
+      <div class="bg-dark rounded shadow-sm p-3">
+        <label class="fs-6">
+          Filtrar recetas
+        </label>
+        <form [formGroup]="filterForm" class="d-flex flex-column gap-3 px-2 px-sm-3 pt-3">
+
+          <!-- Título -->
+          <mat-form-field appearance="outline" color="accent">
+            <mat-label class="text-white">Título</mat-label>
+            <input matInput placeholder="Buscar por título" formControlName="title">
+          </mat-form-field>
+
+          <!-- Ingredientes -->
+          <mat-form-field appearance="outline" color="accent">
+            <mat-label class="text-white">Ingrediente</mat-label>
+            <input matInput placeholder="Buscar por ingrediente" formControlName="ingredients">
+          </mat-form-field>
+
+          <!-- Categorías -->
+          <mat-form-field appearance="outline" color="accent">
+            <mat-label class="text-white">Categorías</mat-label>
+            <mat-select formControlName="categories" multiple #select>
+              <mat-option *ngFor="let category of categories" [value]="category">
+                {{ category }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Tiempo de preparación -->
+          <div class="slider-group d-flex flex-column py-2 text-center text-sm-start">
+            <label class="ms-2 text-nowrap">
+              Tiempo de preparación: {{ filterForm.value.minPrepTime | prepTimeRange:filterForm.value.maxPrepTime }}
+            </label>
+
+            <mat-slider
+              [min]="0"
+              [max]="720"
+              [step]="1"
+              color="accent"
+            >
+              <input matSliderStartThumb formControlName="minPrepTime">
+              <input matSliderEndThumb formControlName="maxPrepTime">
+            </mat-slider>
+          </div>
+
+          <!-- Botón reset -->
+          <button mat-stroked-button color="accent" type="button" (click)="resetFilter()" *ngIf="!select.focused">
+            Restablecer filtros
+          </button>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- Recetas -->
+    <div class="col-12 col-md-7 col-xl-8 mt-3 mt-4 g-4 mb-2">
+      <div class="row justify-content-center">
+        <ng-container *ngIf="recipes().length > 0; else noResults">
+          <div class="col-11 col-md-6 col-xl-4 mb-4" *ngFor="let recipe of recipes()" routerLink="../recipe/{{recipe._id}}">
+            <mat-card class="h-100 shadow-sm">
+              <img mat-card-image [src]="recipe.image" alt="Imagen de receta" (error)="onImageError($event)"/>
+              <mat-card-header class="mt-auto">
+                <mat-card-title>{{ recipe.title }}</mat-card-title>
+                <mat-card-subtitle>por {{ recipe.author.username }}</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content class="mt-auto">
+                <p>{{ recipe.description }}</p>
+                <p><strong>Tiempo de preparacion:</strong> {{ recipe.preparationTime }} min</p>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </ng-container>
+
+        <!-- Sin coincidencias en las recetas existentes -->
+        <ng-template #noResults>
+          <div class="col-11 text-center text-break py-5">
+            <h5 class="fs-4">No se encontraron recetas con los filtros seleccionados.</h5>
+          </div>
+        </ng-template>
+
+        <!-- Paginación -->
+        <mat-paginator class="rounded-5 bg-dark"
+          *ngIf="paginationInfo()!.totalCount > 6"
+          [length]="paginationInfo()!.totalCount"
+          hidePageSize="true"
+          [pageSize]="6"
+          [pageIndex]="paginationInfo()!.currentPage - 1"
+          (page)="onPageChange($event);">
+        </mat-paginator>
+      </div>
+    </div>
+  </div>
+</div>
