@@ -25,3 +25,26 @@
 
 ## 📁 Estructura del repositorio
 
+PFC-Frontend/
+├── src/app/
+│ ├── core/
+│ ├── shared/
+│ ├── pages/
+│ │ ├── home-page/
+│ │ ├── search-page/
+│ │ ├── profile-page/
+│ │ ├── dashboard-page/
+│ │ └── create-update-recipe-page/
+│ └── app.config.ts
+└── angular.json
+
+PFC-Backend/
+├── src/
+│ ├── auth/
+│ ├── comments/
+│ ├── favorites/
+│ ├── ratings/
+│ ├── recipes/
+│ ├── users/
+│ └── main.ts
+└── package.json
